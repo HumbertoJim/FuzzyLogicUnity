@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+/*
+    Autor: Humberto De Jesus Jimenez Gutierrez
+    Fecha de creacion: Marzo 2, 2023
+    Ultima moficacion: Marzo 2, 2023
+*/
+
 namespace FuzzyLogic
 {
     public class FuzzySystem

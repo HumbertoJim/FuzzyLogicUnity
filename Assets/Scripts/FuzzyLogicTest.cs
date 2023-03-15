@@ -23,7 +23,7 @@ public class FuzzyLogicTest : MonoBehaviour
         voiceRateVariable.AddFuzzySet(new TriangularFuzzySet("Medium", min_zero: 3, one: 5, max_zero: 7));
         voiceRateVariable.AddFuzzySet(new DiagonalLineFuzzySet("Good", zero: 6, one: 10));
 
-        songRatingFuzzySystem.AddIndependientSet(voiceRateVariable); // Add Independient variable to System
+        songRatingFuzzySystem.AddIndependientVariable(voiceRateVariable); // Add Independient variable to System
 
         // Instrumental Rate
         FuzzyVariable instrumentalRateVariable = new FuzzyVariable("InstrumentalRate");
@@ -31,7 +31,7 @@ public class FuzzyLogicTest : MonoBehaviour
         instrumentalRateVariable.AddFuzzySet(new TriangularFuzzySet("Medium", min_zero: 3, one: 5, max_zero: 7));
         instrumentalRateVariable.AddFuzzySet(new DiagonalLineFuzzySet("Good", zero: 6, one: 10));
 
-        songRatingFuzzySystem.AddIndependientSet(instrumentalRateVariable); // Add Independient variable to System
+        songRatingFuzzySystem.AddIndependientVariable(instrumentalRateVariable); // Add Independient variable to System
 
         /* END INDEPENDIENT VARIABLES */
 
@@ -45,7 +45,7 @@ public class FuzzyLogicTest : MonoBehaviour
         songRateVariable.AddFuzzySet(new TriangularFuzzySet("Medium", min_zero: 3, one: 5, max_zero: 7));
         songRateVariable.AddFuzzySet(new DiagonalLineFuzzySet("Good", zero: 6, one: 10));
 
-        songRatingFuzzySystem.AddDependientSet(songRateVariable); // Add Dependient variable to System
+        songRatingFuzzySystem.AddDependientVariable(songRateVariable); // Add Dependient variable to System
 
         /* END DEPENDIENT VARIABLES */
 

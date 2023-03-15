@@ -5,7 +5,7 @@ using System;
 /*
     Autor: Humberto De Jesus Jimenez Gutierrez
     Fecha de creacion: Marzo 2, 2023
-    Ultima moficacion: Marzo 2, 2023
+    Ultima moficacion: Marzo 15, 2023
 */
 
 namespace FuzzyLogic
@@ -13,42 +13,42 @@ namespace FuzzyLogic
     public class FuzzySystem
     {
         string name;
-        Dictionary<string, FuzzyVariable> independientSets;
-        Dictionary<string, FuzzyVariable> dependientSets;
+        Dictionary<string, FuzzyVariable> independientVariables;
+        Dictionary<string, FuzzyVariable> dependientVariables;
         Dictionary<string, List<Rule>> rules;
 
         public FuzzySystem(string name)
         {
             this.name = name;
-            independientSets = new Dictionary<string, FuzzyVariable>();
-            dependientSets = new Dictionary<string, FuzzyVariable>();
+            independientVariables = new Dictionary<string, FuzzyVariable>();
+            dependientVariables = new Dictionary<string, FuzzyVariable>();
             rules = new Dictionary<string, List<Rule>>();
         }
 
-        public void AddIndependientSet(FuzzyVariable set)
+        public void AddIndependientVariable(FuzzyVariable variable)
         {
-            if (independientSets.ContainsKey(set.Name()))
+            if (independientVariables.ContainsKey(variable.Name()))
             {
-                throw new ArgumentException("Independient Fuzzy Set '" + set.Name() + "' already added");
+                throw new ArgumentException("Independient Fuzzy Set '" + variable.Name() + "' already added");
             }
-            independientSets.Add(set.Name(), set);
+            independientVariables.Add(variable.Name(), variable);
         }
 
-        public void AddDependientSet(FuzzyVariable set)
+        public void AddDependientVariable(FuzzyVariable variable)
         {
-            if (dependientSets.ContainsKey(set.Name()))
+            if (dependientVariables.ContainsKey(variable.Name()))
             {
-                throw new ArgumentException("Dependient Fuzzy Set '" + set.Name() + "' already added");
+                throw new ArgumentException("Dependient Fuzzy Set '" + variable.Name() + "' already added");
             }
-            dependientSets.Add(set.Name(), set);
-            rules.Add(set.Name(), new List<Rule>());
+            dependientVariables.Add(variable.Name(), variable);
+            rules.Add(variable.Name(), new List<Rule>());
         }
 
         public void AddRule(Rule rule)
         {
-            if (dependientSets.ContainsKey(rule.Consequent().Key))
+            if (dependientVariables.ContainsKey(rule.Consequent().Key))
             {
-                if (!dependientSets[rule.Consequent().Key].FuzzySetExists(rule.Consequent().Value))
+                if (!dependientVariables[rule.Consequent().Key].FuzzySetExists(rule.Consequent().Value))
                 {
                     throw new ArgumentException("Dependient Fuzzy Set '" + rule.Consequent().Key + "' does not contain a fuzzySet with name'" + rule.Consequent().Value + "'");
                 }
@@ -59,9 +59,9 @@ namespace FuzzyLogic
             }
             foreach (KeyValuePair<string, string> condition in rule.Antecedents())
             {
-                if (independientSets.ContainsKey(condition.Key))
+                if (independientVariables.ContainsKey(condition.Key))
                 {
-                    if (!independientSets[condition.Key].FuzzySetExists(condition.Value))
+                    if (!independientVariables[condition.Key].FuzzySetExists(condition.Value))
                     {
                         throw new ArgumentException("Independient Fuzzy Set '" + condition.Key + "' does not contain rule '" + condition.Value + "'");
                     }
@@ -78,7 +78,7 @@ namespace FuzzyLogic
         {
             Dictionary<string, Dictionary<string, float>> fuzzyInputs = new Dictionary<string, Dictionary<string, float>>();
 
-            foreach (KeyValuePair<string, FuzzyVariable> fuzzyVariable in independientSets)
+            foreach (KeyValuePair<string, FuzzyVariable> fuzzyVariable in independientVariables)
             {
                 if (inputs.ContainsKey(fuzzyVariable.Key))
                 {
@@ -99,7 +99,7 @@ namespace FuzzyLogic
             List<KeyValuePair<string, float>> operator_result;
             KeyValuePair<string, float> result;
             List<float> mu_s;
-            foreach (KeyValuePair<string, FuzzyVariable> set in dependientSets)
+            foreach (KeyValuePair<string, FuzzyVariable> set in dependientVariables)
             {
                 operator_result = new List<KeyValuePair<string, float>>();
                 foreach (Rule rule in rules[set.Key])
@@ -125,7 +125,7 @@ namespace FuzzyLogic
                 string maxima_fuzzy_set;
                 float maxima_mu;
                 float maxima_intersection;
-                foreach (KeyValuePair<string, FuzzyVariable> set in dependientSets)
+                foreach (KeyValuePair<string, FuzzyVariable> set in dependientVariables)
                 {
                     maxima_fuzzy_set = "";
                     maxima_mu = 0;
@@ -136,15 +136,15 @@ namespace FuzzyLogic
                         {
                             maxima_fuzzy_set = output.Key;
                             maxima_mu = output.Value;
-                            maxima_intersection = dependientSets[set.Key].LastIntersection(maxima_fuzzy_set, maxima_mu);
+                            maxima_intersection = dependientVariables[set.Key].LastIntersection(maxima_fuzzy_set, maxima_mu);
                         }
                         else if( maxima_mu == output.Value && output.Value > 0)
                         {
-                            if(maxima_intersection < dependientSets[set.Key].LastIntersection(output.Key, output.Value))
+                            if(maxima_intersection < dependientVariables[set.Key].LastIntersection(output.Key, output.Value))
                             {
                                 maxima_fuzzy_set = output.Key;
                                 maxima_mu = output.Value;
-                                maxima_intersection = dependientSets[set.Key].LastIntersection(maxima_fuzzy_set, maxima_mu);
+                                maxima_intersection = dependientVariables[set.Key].LastIntersection(maxima_fuzzy_set, maxima_mu);
                             }
                         }
                     }
@@ -156,7 +156,7 @@ namespace FuzzyLogic
                 string maxima_fuzzy_set;
                 float maxima_mu;
                 float maxima_intersection;
-                foreach (KeyValuePair<string, FuzzyVariable> set in dependientSets)
+                foreach (KeyValuePair<string, FuzzyVariable> set in dependientVariables)
                 {
                     maxima_fuzzy_set = "";
                     maxima_mu = 0;
@@ -167,15 +167,15 @@ namespace FuzzyLogic
                         {
                             maxima_fuzzy_set = output.Key;
                             maxima_mu = output.Value;
-                            maxima_intersection = dependientSets[set.Key].LastIntersection(maxima_fuzzy_set, maxima_mu);
+                            maxima_intersection = dependientVariables[set.Key].LastIntersection(maxima_fuzzy_set, maxima_mu);
                         }
                         else if (maxima_mu == output.Value && output.Value > 0)
                         {
-                            if (maxima_intersection < dependientSets[set.Key].LastIntersection(output.Key, output.Value))
+                            if (maxima_intersection < dependientVariables[set.Key].LastIntersection(output.Key, output.Value))
                             {
                                 maxima_fuzzy_set = output.Key;
                                 maxima_mu = output.Value;
-                                maxima_intersection = dependientSets[set.Key].LastIntersection(maxima_fuzzy_set, maxima_mu);
+                                maxima_intersection = dependientVariables[set.Key].LastIntersection(maxima_fuzzy_set, maxima_mu);
                             }
                         }
                     }

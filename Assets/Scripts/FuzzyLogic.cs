@@ -34,14 +34,62 @@ namespace FuzzyLogic
             independientVariables.Add(variable.Name(), variable);
         }
 
+        public void ReplaceIndependientVariable(FuzzyVariable variable)
+        {
+            if (independientVariables.ContainsKey(variable.Name()))
+            {
+                List<string> sets = variable.GetFuzzySetNames();
+                foreach(string set in sets)
+                {
+                    if(!independientVariables[variable.Name()].FuzzySetExists(set))
+                    {
+                        throw new ArgumentException("Independient Fuzzy Variable '" + variable.Name() + "' does not contain fuzzySet with name '"+set+"', but you are trying to replace it with a new variable that contains the strange fuzzySet");
+                    }
+                }
+                sets = independientVariables[variable.Name()].GetFuzzySetNames();
+                foreach (string set in sets)
+                {
+                    if (!variable.FuzzySetExists(set))
+                    {
+                        throw new ArgumentException("Independient Fuzzy Variable '" + variable.Name() + "' contains fuzzySet with name '" + set + "', but you are trying to replace it with a new variable that does not contain the named fuzzySet");
+                    }
+                }
+            }
+            throw new ArgumentException("Independient Fuzzy Variable '" + variable.Name() + "' does not exist, but you are trying to replace it");
+        }
+
         public void AddDependientVariable(FuzzyVariable variable)
         {
             if (dependientVariables.ContainsKey(variable.Name()))
             {
-                throw new ArgumentException("Dependient Fuzzy Set '" + variable.Name() + "' already added");
+                throw new ArgumentException("Dependient Fuzzy Variable '" + variable.Name() + "' already added");
             }
             dependientVariables.Add(variable.Name(), variable);
             rules.Add(variable.Name(), new List<Rule>());
+        }
+
+        public void ReplaceDependientVariable(FuzzyVariable variable)
+        {
+            if (dependientVariables.ContainsKey(variable.Name()))
+            {
+                List<string> sets = variable.GetFuzzySetNames();
+                foreach (string set in sets)
+                {
+                    if (!dependientVariables[variable.Name()].FuzzySetExists(set))
+                    {
+                        throw new ArgumentException("Dependient Fuzzy Variable '" + variable.Name() + "' does not contain fuzzySet with name '" + set + "', but you are trying to replace it with a new variable that contains the strange fuzzySet");
+                    }
+                }
+                sets = dependientVariables[variable.Name()].GetFuzzySetNames();
+                foreach (string set in sets)
+                {
+                    if (!variable.FuzzySetExists(set))
+                    {
+                        throw new ArgumentException("Dependient Fuzzy Variable '" + variable.Name() + "' contains fuzzySet with name '" + set + "', but you are trying to replace it with a new variable that does not contain the named fuzzySet");
+                    }
+                }
+            }
+            throw new ArgumentException("Dpendient Fuzzy Variable '" + variable.Name() + "' does not exist, but you are trying to replace it");
         }
 
         public void AddRule(Rule rule)
@@ -50,7 +98,7 @@ namespace FuzzyLogic
             {
                 if (!dependientVariables[rule.Consequent().Key].FuzzySetExists(rule.Consequent().Value))
                 {
-                    throw new ArgumentException("Dependient Fuzzy Set '" + rule.Consequent().Key + "' does not contain a fuzzySet with name'" + rule.Consequent().Value + "'");
+                    throw new ArgumentException("Dependient Fuzzy Variable '" + rule.Consequent().Key + "' does not contain a fuzzySet with name'" + rule.Consequent().Value + "'");
                 }
             }
             else
@@ -68,7 +116,7 @@ namespace FuzzyLogic
                 }
                 else
                 {
-                    throw new ArgumentException("Fuzzy System '" + name + "' does not contain Independient Fuzzy Set '" + condition.Key + "'");
+                    throw new ArgumentException("Fuzzy System '" + name + "' does not contain Independient Fuzzy Variable '" + condition.Key + "'");
                 }
             }
             rules[rule.Consequent().Key].Add(rule);
@@ -276,6 +324,16 @@ namespace FuzzyLogic
         public string Name()
         {
             return name;
+        }
+
+        public List<string> GetFuzzySetNames()
+        {
+            List<string> names = new List<string>();
+            foreach(KeyValuePair<string, FuzzySet> set in fuzzySets)
+            {
+                names.Add(set.Key);
+            }
+            return names;
         }
 
         public bool FuzzySetExists(string rule)
